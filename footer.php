@@ -38,15 +38,13 @@
             </div>
             <div class="col-auto">
               <h5>Informatie</h5>
-              <div class="footer__copyright-links">
-                    <?php wp_nav_menu( array(
-                        'theme_location' => 'footer-menu-4',
-                        'depth'       => 1,
-                        'fallback_cb' => false,
-                        'container'   => false,
-                        'menu_class'  => 'footer-nav',
-                    ) ); ?>
-                </div>
+                <?php wp_nav_menu( array(
+                    'theme_location' => 'footer-menu-4',
+                    'depth'       => 1,
+                    'fallback_cb' => false,
+                    'container'   => false,
+                    'menu_class'  => 'footer-nav',
+                ) ); ?>
             </div>
       </div>
     </div>

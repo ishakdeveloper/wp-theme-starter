@@ -5,7 +5,9 @@ get_header();
 
     <main id="main" role="main">
         
-        <?php the_content(); ?>
+        <div class="container-xxl">
+            <?php the_content(); ?>
+        </div>
         
     </main>
 

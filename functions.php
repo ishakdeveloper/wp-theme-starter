@@ -49,6 +49,12 @@ endif;
 
 add_action('after_setup_theme', 'setup');
 
+function theme_add_woocommerce_support() {
+    add_theme_support( 'woocommerce' );
+}
+
+add_action('after_setup_theme', 'theme_add_woocommerce_support');
+
 if (!function_exists('create_menus')) :
     function create_menus() {
       // Register Menus
@@ -61,4 +67,12 @@ if (!function_exists('create_menus')) :
 endif;
 
 add_action('after_setup_theme', 'create_menus');
+
+register_sidebar(
+    array(
+        'Name' => 'Shop Sidebar',
+        'id' => 'shop-sidebar',
+        'class' => '',
+    )
+);
   
