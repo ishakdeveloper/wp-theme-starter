@@ -31,7 +31,7 @@
           'container'      => false,
           'menu_class'     => '',
           'fallback_cb'    => '__return_false',
-          'items_wrap'     => '<ul id="fornax-navbar" class="navbar-nav %2$s">%3$s</ul>',
+          'items_wrap'     => '<ul id="navbar" class="navbar-nav %2$s">%3$s</ul>',
           'depth'          => 2,
         ));
       ?>
@@ -46,7 +46,7 @@
             <div class="col-auto d-flex align-items-center">
               <?php the_custom_logo(); ?>
               <a href="<?php echo esc_url(home_url()) ?>">
-                <span class="brand-name">fornax</span>
+                <span class="brand-name">Per Lui</span>
               </a>
             </div>
             <div class="col-auto">
@@ -59,7 +59,7 @@
                         'container'      => false,
                         'menu_class'     => '',
                         'fallback_cb'    => '__return_false',
-                        'items_wrap'     => '<ul id="fornax-navbar" class="navbar-nav ms-auto %2$s">%3$s</ul>',
+                        'items_wrap'     => '<ul id="navbar" class="navbar-nav ms-auto %2$s">%3$s</ul>',
                         'depth'          => 2,
                       ));
                     ?>
