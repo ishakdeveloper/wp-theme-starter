@@ -23,17 +23,17 @@ jobs:
       run: |
         if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
           echo "DEPLOY_ENV=production" >> $GITHUB_ENV
-          echo "SSH_HOST=${{ secrets.PROD_SSH_HOST }}" >> $GITHUB_ENV
-          echo "SSH_USER=${{ secrets.PROD_SSH_USER }}" >> $GITHUB_ENV
-          echo "SSH_KEY=${{ secrets.PROD_SSH_KEY }}" >> $GITHUB_ENV
-          echo "WORDPRESS_PATH=subdomain.example.com" >> $GITHUB_ENV
+          echo "SSH_HOST=${{ secrets.SSH_HOST }}" >> $GITHUB_ENV
+          echo "SSH_USER=${{ secrets.SSH_USER }}" >> $GITHUB_ENV
+          echo "SSH_KEY=${{ secrets.SSH_KEY }}" >> $GITHUB_ENV
+          echo "WORDPRESS_PATH=fornax.digital" >> $GITHUB_ENV
           echo "WP_THEME_NAME=${{ secrets.PROD_WP_THEME_NAME }}" >> $GITHUB_ENV
         elif [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
           echo "DEPLOY_ENV=staging" >> $GITHUB_ENV
-          echo "SSH_HOST=${{ secrets.STAGING_SSH_HOST }}" >> $GITHUB_ENV
-          echo "SSH_USER=${{ secrets.STAGING_SSH_USER }}" >> $GITHUB_ENV
-          echo "SSH_KEY=${{ secrets.STAGING_SSH_KEY }}" >> $GITHUB_ENV
-          echo "WORDPRESS_PATH=subdomain-staging.example.com" >> $GITHUB_ENV
+          echo "SSH_HOST=${{ secrets.SSH_HOST }}" >> $GITHUB_ENV
+          echo "SSH_USER=${{ secrets.SSH_USER }}" >> $GITHUB_ENV
+          echo "SSH_KEY=${{ secrets.SSH_KEY }}" >> $GITHUB_ENV
+          echo "WORDPRESS_PATH=staging.fornax.digital" >> $GITHUB_ENV
           echo "WP_THEME_NAME=${{ secrets.STAGING_WP_THEME_NAME }}" >> $GITHUB_ENV
         fi
 
@@ -44,13 +44,13 @@ jobs:
 
     - name: Install dependencies
       run: |
-        npm install
+        yarn install
         # or if you're using Composer:
         # composer install
 
     - name: Build assets
       run: |
-        npm run build
+        yarn build
         # or any other build command like gulp, grunt, etc.
 
     - name: Deploy theme and plugins to server
