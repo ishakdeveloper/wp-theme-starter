@@ -15,5 +15,13 @@
     "/build/fonts/Gilroy-Heavy.woff": "/build/fonts/Gilroy-Heavy.woff",
     "/build/fonts/Gilroy-Light.woff": "/build/fonts/Gilroy-Light.woff",
     "/build/fonts/Gilroy-Medium.woff": "/build/fonts/Gilroy-Medium.woff",
-    "/build/fonts/Gilroy-Regular.woff": "/build/fonts/Gilroy-Regular.woff"
+    "/build/fonts/Gilroy-Regular.woff": "/build/fonts/Gilroy-Regular.woff",
+    "/build/fonts/CabinetGrotesk-Black.otf": "/build/fonts/CabinetGrotesk-Black.otf",
+    "/build/fonts/CabinetGrotesk-Bold.otf": "/build/fonts/CabinetGrotesk-Bold.otf",
+    "/build/fonts/CabinetGrotesk-Extrabold.otf": "/build/fonts/CabinetGrotesk-Extrabold.otf",
+    "/build/fonts/CabinetGrotesk-Extralight.otf": "/build/fonts/CabinetGrotesk-Extralight.otf",
+    "/build/fonts/CabinetGrotesk-Light.otf": "/build/fonts/CabinetGrotesk-Light.otf",
+    "/build/fonts/CabinetGrotesk-Medium.otf": "/build/fonts/CabinetGrotesk-Medium.otf",
+    "/build/fonts/CabinetGrotesk-Regular.otf": "/build/fonts/CabinetGrotesk-Regular.otf",
+    "/build/fonts/CabinetGrotesk-Thin.otf": "/build/fonts/CabinetGrotesk-Thin.otf"
 }
