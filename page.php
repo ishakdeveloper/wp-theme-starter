@@ -6,6 +6,7 @@
     <div class="container-xxl">
       <div class="block-article__article-wrapper">
         <div class="block-article__header">
+          <h1>fdfdfdfdf</h1>
           <h1><?php the_title(); ?></h1>
         </div>
 
