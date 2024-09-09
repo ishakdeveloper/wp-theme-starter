@@ -1,71 +1,62 @@
-name: WordPress Theme and Plugins CI/CD
+name: Deploy WordPress Theme
 
 on:
   push:
     branches:
-      - master
       - staging
-  pull_request:
-    branches:
       - master
-      - staging
 
 jobs:
   deploy:
-    name: Deploy WordPress Theme and Plugins
+    name: Deploy to Staging or Production
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
 
-    - name: Set environment-specific variables
-      run: |
-        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-          echo "DEPLOY_ENV=production" >> $GITHUB_ENV
-          echo "SSH_HOST=${{ secrets.SSH_HOST }}" >> $GITHUB_ENV
-          echo "SSH_USER=${{ secrets.SSH_USER }}" >> $GITHUB_ENV
-          echo "SSH_KEY=${{ secrets.SSH_KEY }}" >> $GITHUB_ENV
-          echo "WORDPRESS_PATH=fornax.digital" >> $GITHUB_ENV
-          echo "WP_THEME_NAME=${{ secrets.PROD_WP_THEME_NAME }}" >> $GITHUB_ENV
-        elif [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
-          echo "DEPLOY_ENV=staging" >> $GITHUB_ENV
-          echo "SSH_HOST=${{ secrets.SSH_HOST }}" >> $GITHUB_ENV
-          echo "SSH_USER=${{ secrets.SSH_USER }}" >> $GITHUB_ENV
-          echo "SSH_KEY=${{ secrets.SSH_KEY }}" >> $GITHUB_ENV
-          echo "WORDPRESS_PATH=staging.fornax.digital" >> $GITHUB_ENV
-          echo "WP_THEME_NAME=${{ secrets.STAGING_WP_THEME_NAME }}" >> $GITHUB_ENV
-        fi
-
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.7.0
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
       with:
-        ssh-private-key: ${{ secrets.SSH_KEY }}
+        node-version: '22.5.0' # Specify the Node.js version you need
 
     - name: Install dependencies
       run: |
+        cd wp-content/themes/perlui_theme
         yarn install
-        # or if you're using Composer:
-        # composer install
 
-    - name: Build assets
+    - name: Build project
       run: |
-        yarn build
-        # or any other build command like gulp, grunt, etc.
+        cd wp-content/themes/perlui_theme
+        yarn prod
 
-    - name: Deploy theme and plugins to server
-      run: |
-        # Deploy the theme
-        rsync -avz --delete --exclude='.git' ./wp-content/themes/${WP_THEME_NAME}/ ${SSH_USER}@${SSH_HOST}:${WORDPRESS_PATH}/wp-content/themes/${WP_THEME_NAME}/
-        
-        # Deploy all plugins
-        rsync -avz --delete --exclude='.git' ./wp-content/plugins/ ${SSH_USER}@${SSH_HOST}:${WORDPRESS_PATH}/wp-content/plugins/
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_KEY }}
 
-    - name: Activate the theme and plugins
+    - name: Deploy to Staging
+      if: github.ref == 'refs/heads/staging'
+      env:
+        SERVER: ${{ secrets.SERVER }}
+        USER: ${{ secrets.USER }}
       run: |
-        ssh ${SSH_USER}@${SSH_HOST} "wp theme activate ${WP_THEME_NAME} --path=${WORDPRESS_PATH}"
-        ssh ${SSH_USER}@${SSH_HOST} "wp plugin activate $(echo ${PLUGINS} | tr ',' ' ') --path=${WORDPRESS_PATH}"
+        STAGING_PATH=domains/staging.fornax.digital/public_html/wp-content/themes/perlui_theme/
+        ssh $USER@$SERVER "mkdir -p $STAGING_PATH"
+        rsync -avz --delete --exclude '.git' --exclude 'node_modules' wp-content/themes/perlui_theme/ $USER@$SERVER:$STAGING_PATH
+        ssh $USER@$SERVER "wp db export --path=domains/staging.fornax.digital/public_html/ && wp db import /path/to/your-local-db.sql --path=domains/staging.fornax.digital/public_html/"
+        ssh $USER@$SERVER "wp plugin activate --all --path=domains/staging.fornax.digital/public_html/"
+        ssh $USER@$SERVER "wp theme activate perlui_theme --path=domains/staging.fornax.digital/public_html/"
 
-    - name: Clear WordPress cache (optional)
+    - name: Deploy to Production
+      if: github.ref == 'refs/heads/master'
+      env:
+        SERVER: ${{ secrets.SERVER }}
+        USER: ${{ secrets.USER }}
       run: |
-        ssh ${SSH_USER}@${SSH_HOST} "wp cache flush --path=${WORDPRESS_PATH}"
+        PRODUCTION_PATH=domains/fornax.digital/public_html/wp-content/themes/perlui_theme/
+        ssh $USER@$SERVER "mkdir -p $PRODUCTION_PATH"
+        rsync -avz --delete --exclude '.git' --exclude 'node_modules' wp-content/themes/perlui_theme/ $USER@$SERVER:$PRODUCTION_PATH
+        ssh $USER@$SERVER "wp db export --path=domains/fornax.digital/public_html/ && wp db import /path/to/your-local-db.sql --path=domains/fornax.digital/public_html/"
+        ssh $USER@$SERVER "wp plugin activate --all --path=domains/fornax.digital/public_html/"
+        ssh $USER@$SERVER "wp theme activate perlui_theme --path=domains/fornax.digital/public_html/"
