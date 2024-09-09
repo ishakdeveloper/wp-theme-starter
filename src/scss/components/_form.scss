@@ -1,0 +1,36 @@
+.form__field {
+  display: flex;
+  flex-wrap: wrap;
+
+  &.search {
+    position: relative;
+    button {
+      display: inline-block;
+      text-decoration: none;
+      position: absolute;
+      right: 15px;
+      height: 18px;
+      color: $primary;
+      top: 13px;
+      border: none;
+      background-color: #fff;
+      cursor: pointer;
+    }
+  }
+  input {
+    width: 100%;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 1px solid #e8e8e8;
+    background-color: #fff;
+    border-radius: 4px;
+    color: inherit;
+    font-family: "Proximanova", sans-serif;
+    font-size: 1rem;
+    margin: 0;
+    padding: 12px 15px;
+    vertical-align: baseline;
+    outline: none;
+  }
+}

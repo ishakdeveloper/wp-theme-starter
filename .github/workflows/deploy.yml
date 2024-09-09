@@ -1,0 +1,71 @@
+name: WordPress Theme and Plugins CI/CD
+
+on:
+  push:
+    branches:
+      - master
+      - staging
+  pull_request:
+    branches:
+      - master
+      - staging
+
+jobs:
+  deploy:
+    name: Deploy WordPress Theme and Plugins
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set environment-specific variables
+      run: |
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          echo "DEPLOY_ENV=production" >> $GITHUB_ENV
+          echo "SSH_HOST=${{ secrets.SSH_HOST }}" >> $GITHUB_ENV
+          echo "SSH_USER=${{ secrets.SSH_USER }}" >> $GITHUB_ENV
+          echo "SSH_KEY=${{ secrets.SSH_KEY }}" >> $GITHUB_ENV
+          echo "WORDPRESS_PATH=fornax.digital" >> $GITHUB_ENV
+          echo "WP_THEME_NAME=${{ secrets.PROD_WP_THEME_NAME }}" >> $GITHUB_ENV
+        elif [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
+          echo "DEPLOY_ENV=staging" >> $GITHUB_ENV
+          echo "SSH_HOST=${{ secrets.SSH_HOST }}" >> $GITHUB_ENV
+          echo "SSH_USER=${{ secrets.SSH_USER }}" >> $GITHUB_ENV
+          echo "SSH_KEY=${{ secrets.SSH_KEY }}" >> $GITHUB_ENV
+          echo "WORDPRESS_PATH=staging.fornax.digital" >> $GITHUB_ENV
+          echo "WP_THEME_NAME=${{ secrets.STAGING_WP_THEME_NAME }}" >> $GITHUB_ENV
+        fi
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_KEY }}
+
+    - name: Install dependencies
+      run: |
+        yarn install
+        # or if you're using Composer:
+        # composer install
+
+    - name: Build assets
+      run: |
+        yarn build
+        # or any other build command like gulp, grunt, etc.
+
+    - name: Deploy theme and plugins to server
+      run: |
+        # Deploy the theme
+        rsync -avz --delete --exclude='.git' ./wp-content/themes/${WP_THEME_NAME}/ ${SSH_USER}@${SSH_HOST}:${WORDPRESS_PATH}/wp-content/themes/${WP_THEME_NAME}/
+        
+        # Deploy all plugins
+        rsync -avz --delete --exclude='.git' ./wp-content/plugins/ ${SSH_USER}@${SSH_HOST}:${WORDPRESS_PATH}/wp-content/plugins/
+
+    - name: Activate the theme and plugins
+      run: |
+        ssh ${SSH_USER}@${SSH_HOST} "wp theme activate ${WP_THEME_NAME} --path=${WORDPRESS_PATH}"
+        ssh ${SSH_USER}@${SSH_HOST} "wp plugin activate $(echo ${PLUGINS} | tr ',' ' ') --path=${WORDPRESS_PATH}"
+
+    - name: Clear WordPress cache (optional)
+      run: |
+        ssh ${SSH_USER}@${SSH_HOST} "wp cache flush --path=${WORDPRESS_PATH}"
