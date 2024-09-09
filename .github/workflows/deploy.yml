@@ -28,7 +28,7 @@ jobs:
     - name: Build project
       run: |
         cd wp-content/themes/perlui_theme
-        yarn build
+        yarn prod
 
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
